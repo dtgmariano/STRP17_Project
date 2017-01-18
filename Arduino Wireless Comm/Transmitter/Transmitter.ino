@@ -17,6 +17,10 @@ struct payload_t {
   unsigned long accZ;
 };
 
+payload_t payload;
+
+long test = 0;
+
 
 void setup(){
   Wire.begin();
@@ -28,7 +32,7 @@ void setup(){
 
   SPI.begin();
   radio.begin();
-  network.begin(90, 01); //this node
+  network.begin(90, 02); //this node
 }
 
 void loop(){
@@ -46,10 +50,14 @@ void loop(){
   GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
 
-  payload_t payload = {GyX, GyY, GyZ, AcX, AcY, AcZ};
-  
+  //payload_t payload = {GyX, GyY, GyZ, AcX, AcY, AcZ};
+  payload = {test, test, test, test, test, test};
+  test++;
+  if(test>10000)
+    test = 0;
   RF24NetworkHeader header(00);
   bool ok = network.write(header,&payload,sizeof(payload));   
 
-  delay(1);
+  //delay(1); /**/
+  delay(10);
 }
