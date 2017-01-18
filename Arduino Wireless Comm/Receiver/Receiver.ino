@@ -19,7 +19,6 @@
 #include <RF24.h>
 #include <SPI.h>
 
-
 RF24 radio(9,10);                // nRF24L01(+) radio attached using Getting Started board 
 
 RF24Network network(radio);      // Network uses that radio
@@ -36,6 +35,8 @@ struct payload_t {                 // Structure of our payload
   unsigned long accZ;
 };
 
+RF24NetworkHeader header;        // If so, grab it and print it out
+payload_t payload;
 
 void setup(void)
 {
@@ -47,16 +48,20 @@ void setup(void)
   network.begin(/*channel*/ 90, /*node address*/ this_node);
 }
 
-void loop(void){
-  
+void loop(void)
+{  
   network.update();                  // Check the network regularly
-
-  
-  while ( network.available() ) {     // Is there anything ready for us?
+  while ( network.available() ) 
+  {     // Is there anything ready for us?
     
-    RF24NetworkHeader header;        // If so, grab it and print it out
-    payload_t payload;
+    
     network.read(header,&payload,sizeof(payload));
+    sendData();
+  }
+}
+
+void sendData()
+{
     Serial.print(header.from_node);
     Serial.print('\t');
     Serial.print((int) payload.y);
@@ -70,6 +75,6 @@ void loop(void){
     Serial.print((int) payload.accX);
     Serial.print('\t');
     Serial.println((int) payload.accZ);
-  }
 }
+
 
