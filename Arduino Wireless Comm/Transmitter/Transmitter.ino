@@ -53,7 +53,7 @@ void loop(){
   //payload_t payload = {GyX, GyY, GyZ, AcX, AcY, AcZ};
   payload = {test, test, test, test, test, test};
   test++;
-  if(test>250)
+  if(test>300)
     test = 0;
   RF24NetworkHeader header(00);
   bool ok = network.write(header,&payload,sizeof(payload));   
