@@ -1,4 +1,4 @@
-#include <Wire.h>
+#include<Wire.h>
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
@@ -17,9 +17,6 @@ struct payload_t {
   unsigned long accZ;
 };
 
-payload_t payload;
-
-long test = 0;
 
 void setup(){
   Wire.begin();
@@ -31,7 +28,7 @@ void setup(){
 
   SPI.begin();
   radio.begin();
-  network.begin(90, 02); //this node
+  network.begin(90, 01); //this node
 }
 
 void loop(){
@@ -50,13 +47,30 @@ void loop(){
   GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
 
   payload_t payload = {GyX, GyY, GyZ, AcX, AcY, AcZ};
-  /*payload = {test, test, test, test, test, test};
-  test++;
-  if(test>300)
-    test = 0;*/
+  
   RF24NetworkHeader header(00);
   bool ok = network.write(header,&payload,sizeof(payload));   
 
-  //delay(1); /**/
+  //doSerialPrint();
   delay(10);
+}
+
+void doSerialPrint()
+{
+  // Send the data to the serial port
+
+  Serial.print(AcX);
+  Serial.print("\t");
+  Serial.print(AcY);
+  Serial.print("\t");
+  Serial.print(AcZ);
+  Serial.print("\t");
+  Serial.print(GyX);
+  Serial.print("\t");
+  Serial.print(GyY);
+  Serial.print("\t");
+  Serial.println(GyZ);
+
+  // Delay so we don't swamp the serial port
+  delay(5);
 }

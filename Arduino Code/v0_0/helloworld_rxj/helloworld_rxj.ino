@@ -19,11 +19,13 @@
 #include <RF24.h>
 #include <SPI.h>
 
+
 RF24 radio(9,10);                // nRF24L01(+) radio attached using Getting Started board 
 
 RF24Network network(radio);      // Network uses that radio
 const uint16_t this_node = 00;    // Address of our node in Octal format ( 04,031, etc)
 const uint16_t other_node = 01;   // Address of the other node in Octal format
+
 
 struct payload_t {                 // Structure of our payload
   unsigned long y;
@@ -34,10 +36,6 @@ struct payload_t {                 // Structure of our payload
   unsigned long accZ;
 };
 
-int counter = 0;
-
-RF24NetworkHeader header;        // If so, grab it and print it out
-payload_t payload;
 
 void setup(void)
 {
@@ -49,33 +47,14 @@ void setup(void)
   network.begin(/*channel*/ 90, /*node address*/ this_node);
 }
 
-void loop(void)
-{  
+void loop(void){
+  
   network.update();                  // Check the network regularly
-  while ( network.available() ) 
-  {     // Is there anything ready for us?
+  while ( network.available() ) {     // Is there anything ready for us?
+    
+    RF24NetworkHeader header;        // If so, grab it and print it out
+    payload_t payload;
     network.read(header,&payload,sizeof(payload));
-    sendData();
-  }
-  testing();
-}
-
-void testing()
-{
-  header.from_node = 0;
-  payload.y = counter;
-  payload.p = counter;
-  payload.r = counter;
-  payload.accX = counter;
-  payload.accY = counter;
-  payload.accZ = counter;
-  counter++;
-  if(counter>300)
-    counter = 0; 
-}
-
-void sendData()
-{
     Serial.print(header.from_node);
     Serial.print('\t');
     Serial.print((int) payload.y);
@@ -89,8 +68,6 @@ void sendData()
     Serial.print((int) payload.accX);
     Serial.print('\t');
     Serial.println((int) payload.accZ);
-    delay(10);
+  }
 }
-
-
 

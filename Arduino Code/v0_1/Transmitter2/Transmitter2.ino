@@ -927,7 +927,7 @@ void setup(){
   
   SPI.begin();
   radio.begin();
-  network.begin(90, 02); //this node
+  network.begin(90, 01); //this node
 }
 
 float FS_SEL;
@@ -1017,14 +1017,7 @@ void loop(){
   set_last_read_angle_data(t_now, angle_x, angle_y, angle_z, unfiltered_gyro_angle_x, unfiltered_gyro_angle_y, unfiltered_gyro_angle_z);
   
   //printData();
-  
-  /*AcX=Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)    
-  AcY=Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
-  AcZ=Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
-  GyX=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-  GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-  GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)*/
-
+  //swapBits();
   
   AcX = accel_angle_x;
   AcY = accel_angle_y;
@@ -1033,14 +1026,25 @@ void loop(){
   GyY = angle_y;
   GyZ = angle_z;
 
-  payload_t payload = {GyX, GyY, GyZ, AcX, AcY, AcZ};
-
+  //payload_t payload = {GyX, GyY, GyZ, AcX, AcY, AcZ};
+  payload = {GyX, GyY, GyZ, AcX, AcY, AcZ};
   RF24NetworkHeader header(00);
   bool ok = network.write(header,&payload,sizeof(payload));  
   
   //printData();
   //delay(1); /**/
   delay(10);
+}
+
+//Functions used for the Transmitter1 version
+void swapBits()
+{
+  /*AcX=Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)    
+  AcY=Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
+  AcZ=Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
+  GyX=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+  GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+  GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)*/
 }
 
 void printData()
